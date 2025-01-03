@@ -2,7 +2,7 @@ import { Stack, Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-import Planner from "../components/Planner";
+// import Planner from "../components/Planner";
 
 function Dashboard() {
   const [mainContentPage, setMainContentPage] = useState("planner");
@@ -50,10 +50,9 @@ function Dashboard() {
           <Sidebar />
         </Box>
         <Box sx={{ flex: 2 }}>
-          {mainContentPage === "planner" ? <Planner /> : <Progress />}
+          {/* {mainContentPage === "planner" ? <Planner /> : <Progress />} */}
         </Box>
       </Stack>
-      <SelectCourseModal></SelectCourseModal>
     </>
   );
 }

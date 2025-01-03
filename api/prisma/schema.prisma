@@ -14,109 +14,126 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  password  String?
-  googleId  String? @unique
-  name      String?
-  savedCourses Course[] @relation("userCoursesSaved")
-  userCourses UserCourse[]
-  primaryMajor Program? @relation("primaryMajor", fields: [primaryMajorId], references: [id])
-  primaryMajorId Int?
+  id               Int          @id @default(autoincrement())
+  email            String       @unique
+  password         String?
+  googleId         String?      @unique
+  name             String?
+  savedCourses     Course[]     @relation("userCoursesSaved")
+  userCourses      UserCourse[]
+  primaryMajor     Program?     @relation("primaryMajor", fields: [primaryMajorId], references: [id])
+  primaryMajorId   Int?
+  secondaryMajor   Program?     @relation("secondaryMajor", fields: [secondaryMajorId], references: [id])
+  secondaryMajorId Int?
 }
 
 model UserCourse {
-  id         Int     @id @default(autoincrement())
-  user       User    @relation(fields: [userId], references: [id])
-  userId     Int
-  course     Course  @relation(fields: [courseId], references: [id])
-  courseId   Int
-  semester   Int
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+  semester Int
 
   @@unique([userId, courseId], name: "userId_courseId")
-
 }
 
 model Program {
-  id                 Int                 @id @default(autoincrement())
-  title              String
-  requirements       Requirement[]
-  courseRequirements    CourseRequirement?  @relation(fields: [courseRequirementsId], references: [id])
-  courseRequirementsId  Int? @unique
-  degree Degree @relation(fields: [degreeId], references: [id])
-  degreeId Int
-  usersPrimary User[] @relation("primaryMajor")
+  id                  Int                      @id @default(autoincrement())
+  title               String
+  requirements        GroupRequirement[]
+  courseRequirements  CourseRequirementGroup[]
+  degree              Degree                   @relation(fields: [degreeId], references: [id])
+  degreeId            Int
+  primaryMajorUsers   User[]                   @relation("primaryMajor")
+  secondaryMajorUsers User[]                   @relation("secondaryMajor")
 }
 
 model Degree {
-  id                 Int                 @id @default(autoincrement())
+  id                 Int                      @id @default(autoincrement())
   title              String
-  requirements       Requirement[]
-  courseRequirements    CourseRequirement?  @relation(fields: [courseRequirementsId], references: [id])
-  courseRequirementsId  Int?                @unique
-  school             School  @relation(fields: [schoolId], references: [id])  
+  requirements       GroupRequirement[]
+  courseRequirements CourseRequirementGroup[]
+  school             School                   @relation(fields: [schoolId], references: [id])
   schoolId           Int
-  programs Program[]
+  programs           Program[]
 }
 
 model School {
-  id                    Int                 @id @default(autoincrement())
-  title                 String
-  requirements          Requirement[]
-  courseRequirements    CourseRequirement?  @relation(fields: [courseRequirementsId], references: [id])
-  courseRequirementsId  Int?                @unique
-  degrees               Degree[]     
+  id                 Int                      @id @default(autoincrement())
+  title              String
+  name               String                   @unique
+  requirements       GroupRequirement[]
+  courseRequirements CourseRequirementGroup[]
+  degrees            Degree[]
+  departments        Department[]
 }
 
-model Requirement {
-  id       Int     @id @default(autoincrement())
-  passFail Boolean @default(false)
-  blocking Boolean @default(false)
-  credits  Int
-  tag      Tag     @relation(fields: [tagId], references: [id])
-  tagId    Int
-  program   Program?  @relation(fields: [programId], references: [id])
+model GroupRequirement {
+  id        Int      @id @default(autoincrement())
+  name      String
+  credits   Int
+  tag       Tag?     @relation(fields: [tagId], references: [id])
+  tagId     Int?
+  courses   Course[]
+  program   Program? @relation(fields: [programId], references: [id])
   programId Int?
-  degree   Degree?  @relation(fields: [degreeId], references: [id])
-  degreeId Int?
-  school   School?  @relation(fields: [schoolId], references: [id])
-  schoolId Int?
+  degree    Degree?  @relation(fields: [degreeId], references: [id])
+  degreeId  Int?
+  school    School?  @relation(fields: [schoolId], references: [id])
+  schoolId  Int?
 }
 
 model Tag {
-  id           Int           @id @default(autoincrement())
+  id           Int                @id @default(autoincrement())
   school       String?
-  name         String @unique
-  requirements Requirement[]
+  name         String             @unique
+  requirements GroupRequirement[]
   courses      Course[]
 }
 
-model CourseRequirement {
-  id        Int      @id @default(autoincrement())
-  courses   Course[]   @relation("courseCourseReqs")
-  program   Program?  
-  programId Int? @unique
-  degree    Degree?  
-  degreeId  Int? @unique
-  school    School?  
-  schoolId  Int? @unique
+enum CourseRequirementGroupType {
+  SINGLE
+  AND
+  OR
 }
 
+model CourseRequirementGroup {
+  id           Int                        @id @default(autoincrement())
+  courses      Course[]                   @relation("courseCourseReqGroups")
+  type         CourseRequirementGroupType
+  parentGroups CourseRequirementGroup[]   @relation("nestedCourseReqGroups")
+  subGroups    CourseRequirementGroup[]   @relation("nestedCourseReqGroups")
+  program      Program?                   @relation(fields: [programId], references: [id])
+  programId    Int?
+  degree       Degree?                    @relation(fields: [degreeId], references: [id])
+  degreeId     Int?
+  school       School?                    @relation(fields: [schoolId], references: [id])
+  schoolId     Int?
+}
+
+model Department {
+  id       String   @id
+  code     String
+  name     String
+  school   School   @relation(fields: [schoolId], references: [id])
+  schoolId Int
+  courses  Course[]
+}
 
 model Course {
-  id                   Int                 @id @default(autoincrement())
-  title                String
-  courseCode           String
-  credits              Float
-  department           String
-  departmentCode       String
-  departmentId         String
-  courseRequirements   CourseRequirement[] @relation("courseCourseReqs")
-  attributes           Tag[]
-  usersSaving           User[] @relation("userCoursesSaved")
-  userCourses           UserCourse[]
-  description         String?
+  id                Int                      @id @default(autoincrement())
+  title             String
+  courseCode        String
+  credits           Float
+  department        Department               @relation(fields: [departmentId], references: [id])
+  departmentId      String
+  description       String?
+  courseGroups      CourseRequirementGroup[] @relation("courseCourseReqGroups")
+  tags              Tag[]
+  usersSaving       User[]                   @relation("userCoursesSaved")
+  userCourses       UserCourse[]
+  groupRequirements GroupRequirement[]
 
   @@unique([departmentId, courseCode], name: "departmentId_courseCode")
-
 }
