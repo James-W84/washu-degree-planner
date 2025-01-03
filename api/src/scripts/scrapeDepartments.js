@@ -1,3 +1,4 @@
+//Does not scrape department identifier, e.g. CSE for Computer Science Dept. This is done in course scraping script.
 const puppeteer = require("puppeteer"); //must have chromium
 const lodash = require("lodash");
 const schools = require("./data.json").schools;
