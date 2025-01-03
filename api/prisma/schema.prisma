@@ -113,8 +113,8 @@ model CourseRequirementGroup {
 }
 
 model Department {
-  id       String   @id
-  code     String
+  id       Int      @id @default(autoincrement())
+  code     String   @unique
   name     String
   school   School   @relation(fields: [schoolId], references: [id])
   schoolId Int
@@ -127,7 +127,7 @@ model Course {
   courseCode        String
   credits           Float
   department        Department               @relation(fields: [departmentId], references: [id])
-  departmentId      String
+  departmentId      Int
   description       String?
   courseGroups      CourseRequirementGroup[] @relation("courseCourseReqGroups")
   tags              Tag[]

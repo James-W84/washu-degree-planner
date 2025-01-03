@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer"); //must have chromium
+const lodash = require("lodash");
 const schools = require("./data.json").schools;
 const prisma = require("./../models/index");
 
@@ -8,6 +9,18 @@ function sleep(ms = 1000) {
 
 async function innerHTML(page, e) {
   return await page.evaluate((e) => e.innerHTML, e);
+}
+
+function splitNameAndCode(input) {
+  const match = input.match(/^(.*)\(([^()]+)\)$/);
+  if (match) {
+    return {
+      name: match[1].trim(),
+      code: match[2].trim(),
+    };
+  }
+
+  throw new Error("Invalid name and code string");
 }
 
 async function main(args) {
@@ -22,36 +35,6 @@ async function main(args) {
   await page.goto(
     "https://acadinfo.wustl.edu/CourseListings/Semester/Listing.aspx"
   );
-
-  let button;
-
-  if (semester > 4) {
-    await page.click("#Body_hlMoreSemesters");
-
-    let moreSems = await page.$("#Body_divMoreSems");
-    let inc = 0;
-
-    while (!moreSems) {
-      await sleep();
-      moreSems = await page.$("#Body_divMoreSems");
-      ++inc;
-    }
-    button = await page.$(`#Body_repMoreSems_hlMore_${semester - 5}`);
-  } else {
-    button = await page.$(`#Body_hlSemester${semester}`);
-  }
-
-  const targetSem = await innerHTML(page, button);
-
-  await button.click();
-
-  let title = await page.$("#Body_lblSelectedSemesterDepartment");
-  let text = await innerHTML(page, title);
-  while (!text.includes(targetSem)) {
-    await sleep();
-    title = await page.$("#Body_lblSelectedSemesterDepartment");
-    text = await innerHTML(page, title);
-  }
 
   for (let school of schools) {
     console.log(school.name);
@@ -86,10 +69,27 @@ async function main(args) {
       if (!deptButton) {
         continue;
       }
-      const deptName = await innerHTML(page, deptButton);
-      console.log(deptName);
+      const deptNameCode = await innerHTML(page, deptButton);
+      const deptNameCodeFormatted = deptNameCode.replace(/&amp;/g, "&");
 
-      //   await deptButton.click();
+      const { name, code } = splitNameAndCode(deptNameCodeFormatted);
+      const capitalizedName = lodash.startCase(lodash.lowerCase(name));
+
+      try {
+        const result = await prisma.department.create({
+          data: {
+            code: code,
+            name: capitalizedName,
+            school: {
+              connect: {
+                name: school.name,
+              },
+            },
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 
