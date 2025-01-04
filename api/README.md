@@ -42,8 +42,8 @@ This directory contains executable scripts that are essential for the functional
   npm run scrape-courses [semester] [school]
   ```
 
-  -- **semester**: optional integer argument to specify the semester from which to scrape courses, 1-indexed. Value `1` is the most recently available semester (currently SP25), while `2` is the next most recent semester, and so on. Default value is `1`.
-  -- **school**: optional integer argument to specify which school to scrape courses from, of the 5 schools specified in the data.json file, 1-indexed. Value between 1 and 5, inclusive. Default is to scrape all 5 schools. Must specify **semester** argument to use this argument.
+  - **semester**: optional integer argument to specify the semester from which to scrape courses, 1-indexed. Value `1` is the most recently available semester (currently SP25), while `2` is the next most recent semester, and so on. Default value is `1`.
+  - **school**: optional integer argument to specify which school to scrape courses from, of the 5 schools specified in the data.json file, 1-indexed. Value between 1 and 5, inclusive. Default is to scrape all 5 schools. Must specify **semester** argument to use this argument.
 
 ## Notes
 
