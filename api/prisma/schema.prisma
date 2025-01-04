@@ -115,7 +115,7 @@ model CourseRequirementGroup {
 model Department {
   id         Int      @id @default(autoincrement())
   code       String   @unique
-  identifier String
+  identifier String?
   name       String
   school     School   @relation(fields: [schoolId], references: [id])
   schoolId   Int
