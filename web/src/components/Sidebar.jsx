@@ -19,7 +19,7 @@ const Sidebar = () => {
         alignItems: "center",
       }}
     >
-      <Box height={"calc(100% - 6em)"} marginBottom={"4em"} width={"100%"}>
+      <Box height={"calc(100vh - 15em)"} width={"100%"}>
         {selectedTab === "search" && <Search />}
         {selectedTab === "saved" && <SavedCourses />}
       </Box>

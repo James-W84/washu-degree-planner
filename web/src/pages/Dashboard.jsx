@@ -18,7 +18,8 @@ function Dashboard() {
       <Header></Header>
 
       <Stack direction="row" spacing={2} sx={{ padding: "1em" }}>
-        <Box
+        <Stack
+          direction={"column"}
           sx={{
             flex: 1,
             display: "flex",
@@ -30,7 +31,7 @@ function Dashboard() {
             exclusive
             value={mainContentPage}
             onChange={handleMainContentPageChange}
-            sx={{ width: "90%", marginBottom: "1em" }}
+            sx={{ width: "90%", marginBottom: "1em", height: "2em" }}
           >
             <ToggleButton
               value="planner"
@@ -48,7 +49,7 @@ function Dashboard() {
             </ToggleButton>
           </ToggleButtonGroup>
           <Sidebar />
-        </Box>
+        </Stack>
         <Box sx={{ flex: 2 }}>
           {/* {mainContentPage === "planner" ? <Planner /> : <Progress />} */}
         </Box>

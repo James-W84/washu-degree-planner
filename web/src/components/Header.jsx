@@ -46,7 +46,7 @@ function Header() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ height: "4em" }}>
       <Toolbar disableGutters>
         {/* create image of washu logo here */}
         <img
