@@ -8,17 +8,17 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CourseCard from "./CourseCard";
-import { useAuth } from "../context/AuthContext";
+import { useSession } from "../context/SessionContext";
 
 const SavedCourses = () => {
   const [loading, setLoading] = useState(true);
   const [savedCourses, setSavedCourses] = useState([]);
-  const { userId, isLoggedIn } = useAuth();
+  const { user, isAuthenticated } = useSession();
 
   const fetchSavedCourses = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_ENDPOINT}/course/saved/${userId}`
+        `${process.env.REACT_APP_API_ENDPOINT}/course/saved/${user.id}`
       );
 
       setSavedCourses(response.data.savedCourses);
@@ -30,7 +30,7 @@ const SavedCourses = () => {
 
   useEffect(() => {
     fetchSavedCourses();
-  }, [userId]);
+  }, [user.id]);
 
   return (
     <Box
@@ -48,7 +48,7 @@ const SavedCourses = () => {
       <Divider width={"65%"} sx={{ marginY: "1em" }}></Divider>
       {loading ? (
         <CircularProgress> </CircularProgress>
-      ) : !isLoggedIn ? (
+      ) : !isAuthenticated ? (
         <Typography variant="subtitle1">
           Log in to view your saved courses.
         </Typography>

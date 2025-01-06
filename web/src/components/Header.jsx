@@ -14,6 +14,7 @@ import logo from "../images/logo.jpg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useSession } from "../context/SessionContext";
 
 const settings = [
   { text: "Login", href: "/login", onLoggedOut: true },
@@ -25,13 +26,9 @@ const settings = [
 function Header() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const { user } = useSession();
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setUserId(sessionStorage.getItem("userId"));
-  }, []);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -153,8 +150,8 @@ function Header() {
           >
             {settings.map(
               (setting) =>
-                ((userId == null && setting.onLoggedOut) ||
-                  (userId != null && setting.onLoggedIn)) && (
+                ((user == null && setting.onLoggedOut) ||
+                  (user != null && setting.onLoggedIn)) && (
                   <MenuItem
                     key={setting.text}
                     onClick={() => {
