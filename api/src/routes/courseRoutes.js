@@ -15,7 +15,7 @@ router.get("/search", async (req, res) => {
     };
 
     if (department) {
-      whereClause.AND.push({ department: department });
+      whereClause.AND.push({ departmentId: parseInt(department) });
     }
 
     if (search) {

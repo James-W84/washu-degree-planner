@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   TextField,
   Select,
@@ -10,7 +10,7 @@ import {
   Stack,
   Pagination,
   CircularProgress,
-  Container,
+  ListSubheader,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CourseCard from "./CourseCard";
@@ -18,14 +18,14 @@ import CourseCard from "./CourseCard";
 const Search = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [searchDepartment, setSearchDepartment] = useState("");
   const [departments, setDepartments] = useState([]);
   const [courses, setCourses] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [filteredDepartments, setFilteredDepartments] = useState([]);
 
-  const itemsPerPage = 15;
+  const itemsPerPage = 25;
 
   const handleSearch = (event) => {
     setSearchText(event.target.value);
@@ -51,7 +51,7 @@ const Search = () => {
       });
 
       if (selectedDepartment) {
-        params.append("department", selectedDepartment);
+        params.append("department", selectedDepartment.id);
       }
       if (searchText) {
         params.append("search", searchText);
@@ -73,6 +73,20 @@ const Search = () => {
     }
   };
 
+  const handleDepartmentSearch = (event) => {
+    setSearchDepartment(event.target.value);
+  };
+
+  const filteredDepartments = useMemo(() => {
+    return searchDepartment
+      ? departments.filter(
+          (dep) =>
+            dep.name.toLowerCase().includes(searchDepartment.toLowerCase()) ||
+            dep.code.toLowerCase().includes(searchDepartment.toLowerCase())
+        )
+      : departments;
+  }, [departments, searchDepartment]);
+
   useEffect(() => {
     fetchCourses();
   }, [page, selectedDepartment, searchText]);
@@ -82,7 +96,6 @@ const Search = () => {
   }, []);
 
   const handlePageChange = (event, newPage) => {
-    console.log("Page changed to:", newPage);
     setPage(newPage);
   };
 
@@ -94,11 +107,9 @@ const Search = () => {
       const data = await response.json();
 
       setDepartments(data);
-      setFilteredDepartments(data);
     } catch (error) {
       console.error("Error fetching departments:", error);
       setDepartments([]);
-      setFilteredDepartments([]);
     }
   };
 
@@ -146,38 +157,29 @@ const Search = () => {
             marginTop: 10,
             marginRight: 10,
           }}
+          renderValue={(selected) => {
+            return selected
+              ? `${selected.name} (${selected.code})`
+              : "Filter by Department";
+          }}
         >
           <MenuItem value="">Filter by Department</MenuItem>
-          <MenuItem>
+          <ListSubheader>
             <TextField
+              autoFocus
               placeholder="Search departments..."
               variant="outlined"
               size="small"
               fullWidth
-              onClick={(e) => e.stopPropagation()}
-              onChange={(e) => {
-                e.stopPropagation();
-
-                const searchValue = e.target.value.toLowerCase();
-                if (!searchValue) {
-                  fetchDepartments();
-                } else {
-                  const filteredDeps = departments.filter(
-                    (dep) =>
-                      dep.name.toLowerCase().includes(searchValue) ||
-                      dep.code.toLowerCase().includes(searchValue)
-                  );
-                  setFilteredDepartments(filteredDeps);
-                }
-                e.stopPropagation();
-              }}
+              value={searchDepartment}
+              onChange={handleDepartmentSearch}
               onKeyDown={(e) => e.stopPropagation()}
               onBlur={(e) => {
                 e.stopPropagation();
                 fetchDepartments();
               }}
             />
-          </MenuItem>
+          </ListSubheader>
           {filteredDepartments.map((dept) => (
             <MenuItem key={dept.id} value={dept}>
               {`${dept.name} (${dept.code})`}
@@ -196,8 +198,8 @@ const Search = () => {
           "&::-webkit-scrollbar": {
             display: "none",
           },
-          "-ms-overflow-style": "none", // For Internet Explorer
-          "scrollbar-width": "none", // For Firefox
+          msOverflowStyle: "none", // For Internet Explorer
+          scrollbarWidth: "none", // For Firefox
         }}
       >
         <Stack spacing={2}>

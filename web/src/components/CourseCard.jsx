@@ -58,7 +58,7 @@ const CourseCard = ({
     if (isAuthenticated) {
       fetchIsSaved();
     }
-  }, [user.id, isAuthenticated]);
+  }, [user, isAuthenticated]);
 
   return (
     <>

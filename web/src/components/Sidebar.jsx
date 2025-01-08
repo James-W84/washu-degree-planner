@@ -31,7 +31,7 @@ const Sidebar = () => {
         }}
       >
         <ButtonGroup
-          exclusive
+          exclusive={"true"}
           sx={{ display: "flex", justifyContent: "center" }}
         >
           <Button
