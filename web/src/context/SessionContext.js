@@ -10,7 +10,7 @@ export const SessionProvider = ({ children }) => {
     const storedUser = sessionStorage.getItem("user");
     if (storedUser) {
       setIsAuthenticated(true);
-      setUser(storedUser);
+      setUser(JSON.parse(storedUser));
     }
   };
 
@@ -19,7 +19,7 @@ export const SessionProvider = ({ children }) => {
   }, []);
 
   const login = async (user) => {
-    sessionStorage.setItem("user", user);
+    sessionStorage.setItem("user", JSON.stringify(user));
     setUser(user);
     setIsAuthenticated(true);
   };

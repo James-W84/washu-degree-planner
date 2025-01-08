@@ -33,10 +33,11 @@ router.get("/search", async (req, res) => {
         take: limit,
         skip: skip,
         orderBy: {
-          id: "asc",
+          courseCode: "asc",
         },
         include: {
           tags: true,
+          department: true,
         },
       }),
       prisma.course.count({
@@ -68,6 +69,78 @@ router.get("/departments", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/saved/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const result = await prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+      select: {
+        savedCourses: {
+          include: {
+            tags: true,
+            department: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.post("/save", async (req, res) => {
+  const { userId, courseId, save } = req.body;
+
+  try {
+    const result = await prisma.user.update({
+      where: { id: parseInt(userId) },
+      data: {
+        savedCourses: save
+          ? {
+              connect: {
+                id: parseInt(courseId),
+              },
+            }
+          : {
+              disconnect: {
+                id: parseInt(courseId),
+              },
+            },
+      },
+      include: {
+        savedCourses: true,
+      },
+    });
+
+    res.status(201).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.get("/isSaved/:userId/:courseId", async (req, res) => {
+  const { userId, courseId } = req.params;
+
+  try {
+    const result = await prisma.user.findUnique({
+      where: {
+        id: parseInt(userId),
+        savedCourses: { some: { id: parseInt(courseId) } },
+      },
+    });
+
+    res.status(200).json({ saved: result !== null });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: error.message });
   }
 });
 

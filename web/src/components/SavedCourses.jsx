@@ -16,6 +16,10 @@ const SavedCourses = () => {
   const { user, isAuthenticated } = useSession();
 
   const fetchSavedCourses = async () => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_API_ENDPOINT}/course/saved/${user.id}`
@@ -30,7 +34,7 @@ const SavedCourses = () => {
 
   useEffect(() => {
     fetchSavedCourses();
-  }, [user.id]);
+  }, [user]);
 
   return (
     <Box
@@ -40,7 +44,7 @@ const SavedCourses = () => {
       justifyContent="flex-start"
       width="100%"
       flexDirection={"column"}
-      height={"100%"}
+      height={"calc(100vh - 15em)"}
       marginY={"2em"}
       sx={{ marginBottom: "6em" }}
     >

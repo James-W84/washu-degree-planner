@@ -114,7 +114,10 @@ const Search = () => {
   };
 
   return (
-    <Stack direction={"column"} sx={{ height: "100%", margin: 0 }}>
+    <Stack
+      direction={"column"}
+      sx={{ height: "calc(100vh - 15em)", margin: 0 }}
+    >
       <Box style={{ marginBottom: 20 }}>
         <Stack sx={{ marginBottom: 2 }} direction="row">
           <Typography variant="h6">Filters</Typography>
@@ -202,7 +205,7 @@ const Search = () => {
           scrollbarWidth: "none", // For Firefox
         }}
       >
-        <Stack spacing={2}>
+        <Stack spacing={0.5}>
           {loading ? (
             <CircularProgress />
           ) : (

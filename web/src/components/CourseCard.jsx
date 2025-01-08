@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, Typography, IconButton } from "@mui/material";
+import CourseModal from "./CourseModal";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { toggleSaveCourse } from "./../lib/api";
@@ -13,10 +14,13 @@ const CourseCard = ({
   fetchSavedCourses = null,
 }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [open, setOpen] = useState(false);
+
   const { user, isAuthenticated } = useSession();
 
   const handleToggleSave = async (event) => {
     event.stopPropagation();
+
     await toggleSaveCourse(user.id, course.id, !isBookmarked);
     setIsBookmarked(!isBookmarked);
     if (fetchSavedCourses) {
@@ -68,6 +72,9 @@ const CourseCard = ({
           borderRadius: "12px",
           cursor: "pointer",
         }}
+        onClick={() => {
+          setOpen(true);
+        }}
       >
         <CardContent sx={{ position: "relative" }}>
           {isAuthenticated && !planner && (
@@ -108,7 +115,8 @@ const CourseCard = ({
             className="course-title"
             sx={{ fontWeight: "bold", color: "grey.700", fontSize: "1em" }}
           >
-            {course.departmentCode} {course.courseCode}
+            {course.department.code} {course.department.identifier}{" "}
+            {course.courseCode}
           </Typography>
           <Typography
             className="course-credits"
@@ -118,6 +126,7 @@ const CourseCard = ({
           </Typography>
         </CardContent>
       </Card>
+      <CourseModal course={course} open={open} setOpen={setOpen}></CourseModal>
     </>
   );
 };
