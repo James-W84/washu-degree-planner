@@ -11,9 +11,12 @@ import {
   Pagination,
   CircularProgress,
   ListSubheader,
+  List,
+  ListItem,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CourseCard from "./CourseCard";
+import { Droppable } from "@hello-pangea/dnd";
 
 const Search = () => {
   const [searchText, setSearchText] = useState("");
@@ -205,15 +208,30 @@ const Search = () => {
           scrollbarWidth: "none", // For Firefox
         }}
       >
-        <Stack spacing={0.5}>
-          {loading ? (
-            <CircularProgress />
-          ) : (
-            courses.map((course) => (
-              <CourseCard key={course.id} course={course} />
-            ))
+        <Droppable droppableId="search">
+          {(provided) => (
+            <List
+              spacing={0.5}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              sx={{ width: "100%" }}
+            >
+              {loading ? (
+                <CircularProgress />
+              ) : (
+                courses.map((course) => (
+                  <ListItem
+                    key={course.id}
+                    sx={{ width: "100%", display: "flex" }}
+                  >
+                    <CourseCard course={course} />
+                  </ListItem>
+                ))
+              )}
+              {provided.placeholder}
+            </List>
           )}
-        </Stack>
+        </Droppable>
       </Box>
 
       <Box

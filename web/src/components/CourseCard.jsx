@@ -6,6 +6,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { toggleSaveCourse } from "./../lib/api";
 import axios from "axios";
 import { useSession } from "../context/SessionContext";
+import { Draggable } from "@hello-pangea/dnd";
 
 const CourseCard = ({
   course,
@@ -66,66 +67,82 @@ const CourseCard = ({
 
   return (
     <>
-      <Card
-        sx={{
-          border: "1px solid #800000",
-          borderRadius: "12px",
-          cursor: "pointer",
-        }}
-        onClick={() => {
-          setOpen(true);
-        }}
+      <Draggable
+        key={course.id}
+        draggableId={course.id.toString()}
+        index={course.id}
       >
-        <CardContent sx={{ position: "relative" }}>
-          {isAuthenticated && !planner && (
-            <IconButton
-              aria-label="bookmark"
-              onClick={handleToggleSave}
-              sx={{
-                position: "absolute",
-                top: -12,
-                right: 2,
-              }}
-            >
-              <BookmarkIcon color={isBookmarked ? "primary" : "disabled"} />
-            </IconButton>
-          )}
+        {(provided) => (
+          <Card
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            sx={{
+              border: "1px solid #800000",
+              borderRadius: "12px",
+              cursor: "pointer",
+              width: "100%",
+            }}
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <CardContent sx={{ position: "relative" }}>
+              {isAuthenticated && !planner && (
+                <IconButton
+                  aria-label="bookmark"
+                  onClick={handleToggleSave}
+                  sx={{
+                    position: "absolute",
+                    top: -12,
+                    right: 2,
+                  }}
+                >
+                  <BookmarkIcon color={isBookmarked ? "primary" : "disabled"} />
+                </IconButton>
+              )}
 
-          {planner && (
-            <IconButton
-              aria-label="add course"
-              onClick={handleUnselect}
-              sx={{
-                position: "absolute",
-                bottom: -3,
-                right: 2,
-              }}
-            >
-              <RemoveCircleOutlineIcon color={"primary"} />
-            </IconButton>
-          )}
-          <Typography
-            variant="h6"
-            className="course-code"
-            sx={{ color: "grey.900", fontSize: "1.2em", fontWeight: "bold" }}
-          >
-            {course.title}
-          </Typography>
-          <Typography
-            className="course-title"
-            sx={{ fontWeight: "bold", color: "grey.700", fontSize: "1em" }}
-          >
-            {course.department.code} {course.department.identifier}{" "}
-            {course.courseCode}
-          </Typography>
-          <Typography
-            className="course-credits"
-            sx={{ color: "grey.700", fontSize: "0.8em" }}
-          >
-            Credits:{course.credits}
-          </Typography>
-        </CardContent>
-      </Card>
+              {planner && (
+                <IconButton
+                  aria-label="add course"
+                  onClick={handleUnselect}
+                  sx={{
+                    position: "absolute",
+                    bottom: -3,
+                    right: 2,
+                  }}
+                >
+                  <RemoveCircleOutlineIcon color={"primary"} />
+                </IconButton>
+              )}
+              <Typography
+                variant="h6"
+                className="course-code"
+                sx={{
+                  color: "grey.900",
+                  fontSize: "1.2em",
+                  fontWeight: "bold",
+                }}
+              >
+                {course.title}
+              </Typography>
+              <Typography
+                className="course-title"
+                sx={{ fontWeight: "bold", color: "grey.700", fontSize: "1em" }}
+              >
+                {course.department.code} {course.department.identifier}{" "}
+                {course.courseCode}
+              </Typography>
+              <Typography
+                className="course-credits"
+                sx={{ color: "grey.700", fontSize: "0.8em" }}
+              >
+                Credits:{course.credits}
+              </Typography>
+            </CardContent>
+          </Card>
+        )}
+      </Draggable>
       <CourseModal course={course} open={open} setOpen={setOpen}></CourseModal>
     </>
   );

@@ -2,7 +2,8 @@ import { Stack, Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-// import Planner from "../components/Planner";
+import { DragDropContext } from "@hello-pangea/dnd";
+import CoursePlanner from "../components/Planner/CoursePlanner";
 
 function Dashboard() {
   const [mainContentPage, setMainContentPage] = useState("planner");
@@ -13,8 +14,16 @@ function Dashboard() {
     }
   };
 
+  const handleDragEnd = (result) => {
+    const { source, destination } = result;
+
+    console.log(destination);
+
+    if (!destination) return;
+  };
+
   return (
-    <>
+    <DragDropContext onDragEnd={handleDragEnd}>
       <Header></Header>
 
       <Stack direction="row" spacing={2} sx={{ padding: "1em" }}>
@@ -52,9 +61,10 @@ function Dashboard() {
         </Stack>
         <Box sx={{ flex: 2 }}>
           {/* {mainContentPage === "planner" ? <Planner /> : <Progress />} */}
+          <CoursePlanner></CoursePlanner>
         </Box>
       </Stack>
-    </>
+    </DragDropContext>
   );
 }
 
