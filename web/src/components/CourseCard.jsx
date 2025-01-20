@@ -8,43 +8,28 @@ import axios from "axios";
 import { useSession } from "../context/SessionContext";
 import { Draggable } from "@hello-pangea/dnd";
 
-const CourseCard = ({
-  course,
-  planner = false,
-  fetchCourses = null,
-  fetchSavedCourses = null,
-}) => {
+const CourseCard = ({ course, semester = null, removeSavedCourse = null }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [open, setOpen] = useState(false);
-
-  const { user, isAuthenticated } = useSession();
+  const { user, isAuthenticated, dispatch } = useSession();
 
   const handleToggleSave = async (event) => {
     event.stopPropagation();
-
-    await toggleSaveCourse(user.id, course.id, !isBookmarked);
+    toggleSaveCourse(user.id, course.id, !isBookmarked);
     setIsBookmarked(!isBookmarked);
-    if (fetchSavedCourses) {
-      fetchSavedCourses();
+    if (removeSavedCourse) {
+      removeSavedCourse(course.id);
     }
   };
+  /*
+    known issue: when toggling bookmarks in search/saved panel, 
+    bookmark icon will not toggle in semester pane until refresh
+  */
 
   const handleUnselect = async (event) => {
     event.stopPropagation();
-    try {
-      await axios.post(
-        `${process.env.REACT_APP_API_ENDPOINT}/course/unselect`,
-        {
-          userId: user.id,
-          courseId: course.id,
-        }
-      );
-      if (fetchCourses) {
-        fetchCourses();
-      }
-    } catch (error) {
-      console.error(error);
-    }
+
+    dispatch({ type: "DELETE", payload: { course, semester } });
   };
 
   const fetchIsSaved = async () => {
@@ -88,7 +73,7 @@ const CourseCard = ({
             }}
           >
             <CardContent sx={{ position: "relative" }}>
-              {isAuthenticated && !planner && (
+              {isAuthenticated && (
                 <IconButton
                   aria-label="bookmark"
                   onClick={handleToggleSave}
@@ -102,7 +87,7 @@ const CourseCard = ({
                 </IconButton>
               )}
 
-              {planner && (
+              {semester && (
                 <IconButton
                   aria-label="add course"
                   onClick={handleUnselect}
@@ -137,7 +122,7 @@ const CourseCard = ({
                 className="course-credits"
                 sx={{ color: "grey.700", fontSize: "0.8em" }}
               >
-                Credits:{course.credits}
+                Credits: {course.credits}
               </Typography>
             </CardContent>
           </Card>

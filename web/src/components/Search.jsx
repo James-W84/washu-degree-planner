@@ -17,6 +17,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import CourseCard from "./CourseCard";
 import { Droppable } from "@hello-pangea/dnd";
+import axios from "axios";
 
 const Search = () => {
   const [searchText, setSearchText] = useState("");
@@ -60,12 +61,13 @@ const Search = () => {
         params.append("search", searchText);
       }
 
-      const response = await fetch(
+      const response = await axios.get(
         `${
           process.env.REACT_APP_API_ENDPOINT
         }/course/search?${params.toString()}`
       );
-      const data = await response.json();
+
+      const data = response.data;
       setCourses(data.courses || []);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -104,12 +106,11 @@ const Search = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${process.env.REACT_APP_API_ENDPOINT}/course/departments`
       );
-      const data = await response.json();
 
-      setDepartments(data);
+      setDepartments(response.data);
     } catch (error) {
       console.error("Error fetching departments:", error);
       setDepartments([]);
@@ -222,7 +223,7 @@ const Search = () => {
                 courses.map((course) => (
                   <ListItem
                     key={course.id}
-                    sx={{ width: "100%", display: "flex" }}
+                    sx={{ width: "100%", display: "flex", paddingX: 0 }}
                   >
                     <CourseCard course={course} />
                   </ListItem>

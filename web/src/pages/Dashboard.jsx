@@ -4,9 +4,12 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import { DragDropContext } from "@hello-pangea/dnd";
 import CoursePlanner from "../components/Planner/CoursePlanner";
+import { useSession } from "../context/SessionContext";
+import axios from "axios";
 
 function Dashboard() {
   const [mainContentPage, setMainContentPage] = useState("planner");
+  const { dispatch } = useSession();
 
   const handleMainContentPageChange = (event, newMainContentPage) => {
     if (newMainContentPage !== null) {
@@ -14,12 +17,32 @@ function Dashboard() {
     }
   };
 
-  const handleDragEnd = (result) => {
-    const { source, destination } = result;
-
-    console.log(destination);
+  const handleDragEnd = async (result) => {
+    const { draggableId, source, destination } = result;
 
     if (!destination) return;
+
+    if (source.droppableId === "search" || source.droppableId === "saved") {
+      if (source.droppableId === destination.droppableId) {
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_ENDPOINT}/course/one/${draggableId}`
+        );
+
+        dispatch({
+          type: "ADD",
+          payload: {
+            course: response.data,
+            semester: parseInt(destination.droppableId),
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   return (

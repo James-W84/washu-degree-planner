@@ -1,13 +1,15 @@
 import {
-  Stack,
   Box,
   Typography,
   Divider,
   CircularProgress,
+  List,
+  ListItem,
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CourseCard from "./CourseCard";
+import { Droppable } from "@hello-pangea/dnd";
 import { useSession } from "../context/SessionContext";
 
 const SavedCourses = () => {
@@ -32,6 +34,12 @@ const SavedCourses = () => {
     }
   };
 
+  const removeSavedCourse = (courseId) => {
+    setSavedCourses((savedCourses) =>
+      savedCourses.filter((course) => course.id !== courseId)
+    );
+  };
+
   useEffect(() => {
     fetchSavedCourses();
   }, [user]);
@@ -44,12 +52,10 @@ const SavedCourses = () => {
       justifyContent="flex-start"
       width="100%"
       flexDirection={"column"}
-      height={"calc(100vh - 15em)"}
-      marginY={"2em"}
-      sx={{ marginBottom: "6em" }}
+      sx={{ height: "calc(100vh - 15em)" }}
     >
       <Typography variant="h6">Saved Courses</Typography>
-      <Divider width={"65%"} sx={{ marginY: "1em" }}></Divider>
+      <Divider width={"65%"} sx={{ marginY: "0.5em" }}></Divider>
       {loading ? (
         <CircularProgress> </CircularProgress>
       ) : !isAuthenticated ? (
@@ -62,29 +68,49 @@ const SavedCourses = () => {
           it for later.
         </Typography>
       ) : (
-        <Box
-          sx={{
-            overflowY: "scroll",
-            paddingBottom: "6em",
-            width: "95%",
-            textAlign: "left",
-            "&::-webkit-scrollbar": {
-              display: "none",
-            },
-            "-ms-overflow-style": "none", // For Internet Explorer
-            "scrollbar-width": "none", // For Firefox
-          }}
-        >
-          <Stack spacing={2}>
-            {savedCourses.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                fetchSavedCourses={fetchSavedCourses}
-              />
-            ))}
-          </Stack>
-        </Box>
+        <Droppable droppableId="saved">
+          {(provided) => (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                height: "calc (100vh - 13em)",
+                overflowY: "scroll",
+                flexGrow: 1,
+                marginBottom: 0,
+                "&::-webkit-scrollbar": {
+                  display: "none",
+                },
+                msOverflowStyle: "none", // For Internet Explorer
+                scrollbarWidth: "none", // For Firefox
+              }}
+            >
+              <List
+                spacing={0.5}
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                sx={{ width: "100%" }}
+              >
+                {loading ? (
+                  <CircularProgress />
+                ) : (
+                  savedCourses.map((course) => (
+                    <ListItem
+                      key={course.id}
+                      sx={{ width: "100%", display: "flex", paddingX: 0 }}
+                    >
+                      <CourseCard
+                        course={course}
+                        removeSavedCourse={removeSavedCourse}
+                      />
+                    </ListItem>
+                  ))
+                )}
+                {provided.placeholder}
+              </List>
+            </Box>
+          )}
+        </Droppable>
       )}
     </Box>
   );
