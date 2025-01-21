@@ -9,7 +9,7 @@ import axios from "axios";
 
 function Dashboard() {
   const [mainContentPage, setMainContentPage] = useState("planner");
-  const { dispatch } = useSession();
+  const { dispatch, checkAlreadySelected } = useSession();
 
   const handleMainContentPageChange = (event, newMainContentPage) => {
     if (newMainContentPage !== null) {
@@ -17,13 +17,14 @@ function Dashboard() {
     }
   };
 
-  const handleDragEnd = async (result) => {
-    const { draggableId, source, destination } = result;
+  const handleDragEnd = async (rubric) => {
+    const { draggableId, source, destination } = rubric;
 
-    if (!destination) return;
+    if (!destination || source.droppableId === destination.droppableId) return;
 
     if (source.droppableId === "search" || source.droppableId === "saved") {
-      if (source.droppableId === destination.droppableId) {
+      if (checkAlreadySelected(draggableId)) {
+        alert("already selected this course");
         return;
       }
 
@@ -37,6 +38,23 @@ function Dashboard() {
           payload: {
             course: response.data,
             semester: parseInt(destination.droppableId),
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_ENDPOINT}/course/one/${draggableId}`
+        );
+
+        dispatch({
+          type: "CHANGE",
+          payload: {
+            course: response.data,
+            semesterFrom: parseInt(source.droppableId),
+            semesterTo: parseInt(destination.droppableId),
           },
         });
       } catch (error) {

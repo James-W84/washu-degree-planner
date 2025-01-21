@@ -7,6 +7,7 @@ import { toggleSaveCourse } from "./../lib/api";
 import axios from "axios";
 import { useSession } from "../context/SessionContext";
 import { Draggable } from "@hello-pangea/dnd";
+import { fullCourseCode } from "../lib/courseUtils";
 
 const CourseCard = ({ course, semester = null, removeSavedCourse = null }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -54,7 +55,7 @@ const CourseCard = ({ course, semester = null, removeSavedCourse = null }) => {
     <>
       <Draggable
         key={course.id}
-        draggableId={course.id.toString()}
+        draggableId={course.id + (semester ? `s-${semester}` : "")}
         index={course.id}
       >
         {(provided) => (
@@ -115,8 +116,7 @@ const CourseCard = ({ course, semester = null, removeSavedCourse = null }) => {
                 className="course-title"
                 sx={{ fontWeight: "bold", color: "grey.700", fontSize: "1em" }}
               >
-                {course.department.code} {course.department.identifier}{" "}
-                {course.courseCode}
+                {fullCourseCode(course)}
               </Typography>
               <Typography
                 className="course-credits"

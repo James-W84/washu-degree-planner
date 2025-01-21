@@ -71,6 +71,28 @@ export const SessionProvider = ({ children }) => {
     }
   };
 
+  const changeCourseSemester = async (courseId, semesterTo) => {
+    if (!isAuthenticated) return;
+
+    try {
+      await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/course/change`, {
+        userId: user.id,
+        courseId,
+        semester: semesterTo,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const checkAlreadySelected = (courseId) => {
+    return Object.values(state).some((sem) =>
+      sem.some(
+        (selectedCourse) => parseInt(selectedCourse.id) === parseInt(courseId)
+      )
+    );
+  };
+
   const courseSelectionReducer = (state, action) => {
     switch (action.type) {
       case "INIT":
@@ -91,6 +113,20 @@ export const SessionProvider = ({ children }) => {
         );
         unselectCourse(course.id);
         return { ...state, [semester]: newSemester };
+      }
+      case "CHANGE": {
+        const { course, semesterFrom, semesterTo } = action.payload;
+        const newSemesterFrom = [...state[semesterFrom]].filter(
+          (selected) => selected.id !== course.id
+        );
+        const newSemesterTo = structuredClone(state[semesterTo]);
+        newSemesterTo.push(course);
+        changeCourseSemester(course.id, semesterTo);
+        return {
+          ...state,
+          [semesterFrom]: newSemesterFrom,
+          [semesterTo]: newSemesterTo,
+        };
       }
       default: {
         throw Error("Unknown action: " + action.type);
@@ -142,6 +178,7 @@ export const SessionProvider = ({ children }) => {
         logout,
         state,
         dispatch,
+        checkAlreadySelected,
       }}
     >
       {children}

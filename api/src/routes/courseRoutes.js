@@ -212,6 +212,27 @@ router.post("/unselect", async (req, res) => {
   }
 });
 
+router.post("/change", async (req, res) => {
+  const { userId, courseId, semester } = req.body;
+
+  try {
+    const result = await prisma.userCourse.update({
+      where: {
+        userId_courseId: {
+          userId: parseInt(userId),
+          courseId: parseInt(courseId),
+        },
+      },
+      data: { semester: parseInt(semester) },
+    });
+
+    res.status(201).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
 router.get("/selected/:userId", async (req, res) => {
   const { userId } = req.params;
 
