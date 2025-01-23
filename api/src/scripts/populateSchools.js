@@ -1,5 +1,5 @@
 const prisma = require("./../models/index");
-const schools = require("./data.json").schools;
+const schools = require("./data/schools.json");
 
 async function main() {
   try {

@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "webstacLinkId": 0,
+    "name": "Architecture",
+    "title": "Sam Fox School of Design & Visual Arts"
+  },
+  {
+    "id": 2,
+    "webstacLinkId": 1,
+    "name": "Art",
+    "title": "Sam Fox School of Design & Visual Arts"
+  },
+  {
+    "id": 3,
+    "webstacLinkId": 2,
+    "name": "Arts & Sciences",
+    "title": "College of Arts & Sciences"
+  },
+  {
+    "id": 4,
+    "webstacLinkId": 3,
+    "name": "Business",
+    "title": "Olin School of Business"
+  },
+  {
+    "id": 5,
+    "webstacLinkId": 6,
+    "name": "Engineering",
+    "title": "McKelvey School of Engineering"
+  }
+]

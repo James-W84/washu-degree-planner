@@ -1,0 +1,97 @@
+[
+  {
+    "id": 1,
+    "name": "Architecture",
+    "requirementSet": {
+      "electiveRequirements": [],
+      "tagRequirements": [
+        { "tags": ["CWP"], "credits": 3 },
+        { "tags": ["Arch: SSC"], "credits": 3 },
+        { "tags": ["Arch: HUM"], "credits": 3 }
+      ],
+      "courseRequirementGroups": [
+        { "type": "SINGLE", "courses": ["L24 131"] },
+        { "type": "SINGLE", "courses": ["L31 191"] },
+        { "type": "SINGLE", "courses": ["L01 113"] }
+      ],
+      "startYear": 2024
+    }
+  },
+  {
+    "id": 2,
+    "name": "Art",
+    "requirementSet": {
+      "electiveRequirements": [],
+      "tagRequirements": [],
+      "courseRequirementGroups": [],
+      "startYear": 2024
+    }
+  },
+  {
+    "id": 3,
+    "name": "Arts & Sciences",
+    "requirementSet": {
+      "electiveRequirements": [],
+      "tagRequirements": [
+        { "tags": ["CWP"], "credits": 3 },
+        { "tags": ["A&S IQ: AN"], "credits": 3 },
+        { "tags": ["A&S IQ: SC"], "credits": 3 },
+        { "tags": ["A&S IQ: WI"], "credits": 3 },
+        { "tags": ["A&S IQ: HUM"], "credits": 9 },
+        { "tags": ["A&S IQ: NSM"], "credits": 9 },
+        { "tags": ["A&S IQ: SSC"], "credits": 9 },
+        { "tags": ["A&S IQ: LCD"], "credits": 12 }
+      ],
+      "courseRequirementGroups": [],
+      "startYear": 2024
+    }
+  },
+  {
+    "id": 4,
+    "name": "Business",
+    "requirementSet": {
+      "electiveRequirements": [],
+      "tagRequirements": [
+        { "tags": ["CWP"], "credits": 3 },
+        { "tags": ["BU: SCI"], "credits": 3 },
+        { "tags": ["BU: HUM"], "credits": 3 },
+        { "tags": ["BU: IS"], "credits": 6 },
+        { "tags": ["BU: BA"], "credits": 3 },
+        { "tags": ["BU: ETH"], "credits": 3 }
+      ],
+      "courseRequirementGroups": [
+        { "type": "AND", "courses": ["L24 131", "L24 132"] },
+        { "type": "SINGLE", "courses": ["B50 2610"] },
+        { "type": "SINGLE", "courses": ["B50 2620"] },
+        { "type": "SINGLE", "courses": ["B59 120"] },
+        { "type": "SINGLE", "courses": ["B59 121"] },
+        { "type": "SINGLE", "courses": ["B59 220"] },
+        { "type": "SINGLE", "courses": ["B52 340"] },
+        { "type": "SINGLE", "courses": ["B54 290"] },
+        { "type": "OR", "courses": ["B54 292", "L11 1021"] },
+        { "type": "SINGLE", "courses": ["B53 100"] },
+        { "type": "SINGLE", "courses": ["B53 150A"] },
+        { "type": "SINGLE", "courses": ["B53 201"] },
+        { "type": "SINGLE", "courses": ["B55 370"] },
+        { "type": "SINGLE", "courses": ["B56 360"] },
+        { "type": "SINGLE", "courses": ["B57 356"] }
+      ],
+      "startYear": 2024
+    }
+  },
+  {
+    "id": 5,
+    "name": "Engineering",
+    "requirementSet": {
+      "electiveRequirements": [],
+      "tagRequirements": [
+        { "tags": ["CWP"], "credits": 3 },
+        { "tags": ["EN: H", "EN: S"], "credits": 18 },
+        { "tags": ["EN: H"], "credits": 6 },
+        { "tags": ["EN: S"], "credits": 6 }
+      ],
+      "courseRequirementGroups": [],
+      "startYear": 2024
+    }
+  }
+]
